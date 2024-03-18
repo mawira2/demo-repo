@@ -1,0 +1,156 @@
+1. A company requires a program to enter employee name, hours worked and rate per hour of an employee then calculate basic pay. Tax is calculated on basic pay as follows:
+Basic pay
+Tax
+Over 70000
+25% of basic pay
+Between 15000 and
+15% of basic pay
+70000
+Below 15000
+No tax
+i. Write a shell script that will enable the user to implement the following.
+ii. Prompt the user to enter employee name, hours worked and rate per hour
+iii. Calculate the basic pay (basic pay = hours worked * rate per hour)
+above
+
+
+
+# Function to calculate tax based on basic pay
+calculate_tax() {
+    basic_pay=$1
+    if (( $basic_pay > 70000 )); then
+        tax=$(echo "scale=2; $basic_pay * 0.25" | bc)
+    elif (( $basic_pay >= 15000 && $basic_pay <= 70000 )); then
+        tax=$(echo "scale=2; $basic_pay * 0.15" | bc)
+    else
+        tax=0
+    fi
+    echo $tax
+}
+
+# Prompt the user to enter employee details
+read -p "Enter employee name: " name
+read -p "Enter hours worked: " hours_worked
+read -p "Enter rate per hour: " rate_per_hour
+
+# Calculate basic pay
+basic_pay=$((hours_worked * rate_per_hour))
+
+# Calculate tax
+tax=$(calculate_tax $basic_pay)
+
+# Calculate net pay
+net_pay=$((basic_pay - tax))
+
+# Display results
+echo "Employee Name: $name"
+echo "Basic Pay: $basic_pay"
+echo "Tax: $tax"
+echo "Net Pay: $net_pay"
+
+2..A system call is a controlled entry point into the kernel, allowing a process to request that the kernel perform some action on the process's behalf.
+To demonstrate a system call, Write a C program that opens a file, writes "Hello World" to it, reads the content back, and then prints the read content. Finally, close the file. Ensure you document (comment) every line of code in your program.
+
+#include <stdio.h>      // Standard input/output functions
+#include <stdlib.h>     // Standard library functions
+#include <unistd.h>     // POSIX operating system API
+
+int main() {
+    FILE *file_ptr;     // File pointer
+
+    // Open the file for writing
+    file_ptr = fopen("example.txt", "w");
+    if (file_ptr == NULL) {     // Check if file opening failed
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    // Write "Hello World" to the file
+    fprintf(file_ptr, "Hello World\n");
+    
+    // Close the file
+    fclose(file_ptr);
+
+    // Open the file for reading
+    file_ptr = fopen("example.txt", "r");
+    if (file_ptr == NULL) {     // Check if file opening failed
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    // Read the content from the file
+    char buffer[100];           // Buffer to store read content
+    if (fgets(buffer, sizeof(buffer), file_ptr) != NULL) {
+        // Print the read content
+        printf("Content read from file: %s", buffer);
+    } else {
+        // Handle read error
+        perror("Error reading file");
+        exit(EXIT_FAILURE);
+    }
+    
+    // Close the file
+    fclose(file_ptr);
+
+    return 0;
+}
+
+
+3. You are tasked with creating a shell script to calculate and display the electricity bill for a given customer based on the units consumed. The program should consider different charging rates and apply surcharges as specified. Implement the program using the provided criteria. The charges are as follow:
+a)
+Units
+Charges per unit (Ksh)
+upto 199
+120
+200 and above but less than 400
+150
+400 and above but less than 600
+180
+600 and above
+200.
+
+
+#!/bin/bash
+
+# Function to calculate electricity bill based on units consumed
+calculate_bill() {
+    units=$1
+    if (( $units < 200 )); then
+        charges=$((units * 120))
+    elif (( $units < 400 )); then
+        charges=$((units * 150))
+    elif (( $units < 600 )); then
+        charges=$((units * 180))
+    else
+        charges=$((units * 200))
+    fi
+    echo $charges
+}
+
+# Function to apply surcharge if applicable
+apply_surcharge() {
+    bill=$1
+    surcharge_percent=10
+    if (( $bill > 5000 )); then
+        surcharge=$((bill * surcharge_percent / 100))
+        total_bill=$((bill + surcharge))
+    else
+        total_bill=$bill
+    fi
+    echo $total_bill
+}
+
+# Prompt user to enter units consumed
+read -p "Enter units consumed: " units
+
+# Calculate electricity bill
+bill=$(calculate_bill $units)
+
+# Apply surcharge if applicable
+total_bill=$(apply_surcharge $bill)
+
+# Display the electricity bill
+echo "Electricity Bill: Ksh $total_bill"
+
+
+
